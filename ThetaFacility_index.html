@@ -94,7 +94,10 @@ button:hover {
     padding: 10px;
     background: rgba(0, 10, 20, 0.6);
     border-left: 3px solid #00eaff;
-    white-space: pre-line;
+    white-space: pre-wrap;  /* Fixed text overflow issue */
+    word-wrap: break-word;  /* Ensures long lines break appropriately */
+    max-height: 200px;  /* Limits the height of the log */
+    overflow-y: auto;  /* Allows scrolling if content exceeds height */
 }
 
 /* typing animation */
@@ -123,9 +126,9 @@ button:hover {
 <div id="page1" class="terminal">
 
     <div class="terminal-log typewriter">
-> Initializing Secure Terminal...
-> Establishing encrypted link...
-> Running Authentication Protocol...
+> Initializing Secure Terminal...<br>
+> Establishing encrypted link...<br>
+> Running Authentication Protocol...<br>
     </div>
 
     <h1>VANTHRUDNIR ARMS INDUSTRIES</h1>
@@ -155,11 +158,11 @@ button:hover {
 <div id="page2" class="terminal">
 
     <div class="terminal-log">
-[LOG] Signature Accepted  
->>> ACCESS UNLOCKED  
-// Operator Verified  
-// Identity Hash Synced  
-// Clearance Tier Elevated  
+[LOG] Signature Accepted <br>
+>>> ACCESS UNLOCKED <br>
+// Operator Verified <br>
+// Identity Hash Synced <br>
+// Clearance Tier Elevated <br>
     </div>
 
     <h1>ACCESS CONFIRMED</h1>
@@ -171,7 +174,6 @@ button:hover {
 
     <h2>You’re cleared to proceed. Enjoy your time in the field, Operator.</h2>
 </div>
-
 
 <script>
 function signDocument() {
