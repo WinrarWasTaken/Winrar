@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vanthrudnir Arms — PDA Terminal</title>
+<style>
+  /* --- PAGE / BG --- */
+  :root{
+    --pda-bg:#041018;
+    --accent:#00eaff;
+    --muted:#6fb7c6;
+    --glass: rgba(255,255,255,0.03);
+  }
+  html,body{height:100%;margin:0;background:
+    radial-gradient(circle at 10% 10%, rgba(0,140,160,0.03), transparent 10%),
+    linear-gradient(180deg,#02060a 0%, #030a0f 100%);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;color:var(--accent)}
+  /* center like a handheld device */
+  .screen-wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:28px}
+  .pda{
+    width:380px; max-width:92vw; border-radius:18px; padding:14px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.45));
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+    border: 1px solid rgba(0,255,255,0.06);
+    position:relative; overflow:hidden;
+    transform-origin:center;
+    /* Flicker/glitch removed */
+  }
+
+  /* subtle "device bezel" */
+  .bezel{position:absolute;inset:0;border-radius:18px;pointer-events:none;
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.45); }
+
+  /* top status row */
+  .status{
+    height:28px; display:flex;align-items:center;gap:10px;padding:6px 8px;color:var(--muted); font-size:12px;
+  }
+  .sigbar{display:flex;gap:6px;align-items:center}
+  .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(180deg,var(--accent),#63e6ff);box-shadow:0 0 6px rgba(0,234,255,0.18)}
+  .battery{width:36px;height:10px;border:1px solid rgba(255,255,255,0.06);border-radius:3px;display:inline-block;position:relative}
+  .battery::after{content:'';position:absolute;right:-6px;top:2px;width:4px;height:6px;background:rgba(255,255,255,0.06);border-radius:1px}
+  .bat-fill{height:100%;width:60%;background:linear-gradient(90deg,#99fbff,#00eaff);border-radius:2px}
+
+  /* terminal main area */
+  .terminal{
+    background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.06));
+    margin:8px; padding:12px; border-radius:10px; min-height:360px; box-sizing:border-box;
+    border: 1px solid rgba(255,255,255,0.02);
+    position:relative; overflow:hidden;
+  }
+
+  /* fake scanlines / noise overlay */
+  .scanlines::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image: linear-gradient(rgba(255,255,255,0.01) 50%, rgba(0,0,0,0.02) 51%);
+    background-size: 100% 4px; mix-blend-mode:overlay; opacity:0.55;
+  }
+  .scanlines::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(circle at 10% 10%, rgba(0,255,255,0.03), transparent 10%),
+                linear-gradient(90deg, rgba(0,0,0,0.0), rgba(0,0,0,0.06));
+    opacity:0.12;
+  }
+
+  /* boot / log area */
+  .log{
+    font-size:12px; line-height:1.35; color:var(--muted); white-space:pre-wrap;
+    max-height:180px; overflow:auto; padding:6px; border-radius:6px; border-left:3px solid rgba(0,234,255,0.06);
+    background: linear-gradient(180deg, rgba(0,10,14,0.25), rgba(0,10,14,0.06)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+
+  /* "PDA text" style headings */
+  .brand{display:flex;flex-direction:column;align-items:center;margin:10px 0 8px}
+  .brand h1{margin:0;font-size:15px;letter-spacing:1px;color:#bffcff;text-shadow:0 0 8px rgba(0,234,255,0.06)}
+  .brand h2{margin:2px 0 0;font-size:11px;color:var(--muted);font-weight:400}
+
+  /* divider */
+  .divider{height:1px;background: linear-gradient(90deg, rgba(0,234,255,0.08), rgba(0,234,255,0.02));margin:10px 0;border-radius:2px}
+
+  /* content paragraph adapted to narrow PDA */
+  .content{font-size:13px;color:#dff9ff;padding:8px 6px;line-height:1.45;max-height:120px;overflow:auto}
+
+  ul { margin:8px 0 0 18px; padding:0;color:#dff9ff}
+  li{margin-bottom:6px;font-size:12.6px}
+
+  /* signature area (small keypad look) */
+  .sig-wrap{display:flex;flex-direction:column;gap:8px;padding:6px;margin-top:8px}
+  input[type="text"]{
+    background:rgba(0,0,0,0.35); border:1px solid rgba(0,234,255,0.06); color:var(--accent); padding:10px;border-radius:6px;
+    font-size:13px; outline:none; width:100%;
+  }
+  .btn{
+    background:linear-gradient(90deg,#00f2ff,#00a7ca); color:#00120f;border:none;padding:10px;border-radius:8px; font-weight:700;cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,234,255,0.08); text-transform:uppercase; letter-spacing:0.8px;
+  }
+  .btn:active{transform:translateY(1px)}
+
+  /* page 2 confirmation */
+  #page2{display:none}
+  .ok-badge{display:inline-block;padding:6px 8px;border-radius:6px;background:linear-gradient(90deg,#79ffdd,#00caa6);color:#04211a;font-weight:700;margin-bottom:8px}
+
+  /* typing caret for manual typewriter lines */
+  .caret { display:inline-block; width:8px; background:var(--accent); margin-left:6px; animation: blink 900ms steps(1) infinite; height:14px; vertical-align:middle; border-radius:2px; }
+  @keyframes blink { 50% { opacity:0 } }
+
+  /* small responsive */
+  @media (max-width:420px){
+    .pda{ width:92vw; padding:10px }
+    .log{ font-size:11px }
+  }
+</style>
+</head>
+<body>
+<div class="screen-wrap">
+  <div class="pda">
+    <div class="bezel"></div>
+
+    <!-- STATUS BAR -->
+    <div class="status">
+      <div class="sigbar">
+        <div style="font-size:11px;color:var(--muted)">PDA v3.1</div>
+        <div style="width:6px"></div>
+        <div class="dot" title="link status"></div>
+      </div>
+
+      <div style="flex:1"></div>
+      <div style="font-size:12px;color:var(--muted)" id="clock">--:--</div>
+      <div style="width:10px"></div>
+      <div class="battery" title="battery">
+        <div class="bat-fill"></div>
+      </div>
+    </div>
+
+    <!-- terminal area -->
+    <div class="terminal scanlines">
+      <!-- boot log (will be typed) -->
+      <div id="bootLog" class="log" aria-live="polite"></div>
+
+      <div class="brand" style="margin-top:10px">
+        <h1>VANTHRUDNIR ARMS INDUSTRIES</h1>
+        <h2>EXTERNAL OPERATIVE FILE</h2>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- agreement content -->
+      <div id="agreement" class="content" style="display:none">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">NOTICE & TERMS</div>
+        <div>
+          Your participation in the joint training program overseen by <strong>Agent Gungnir</strong> requires strict compliance
+          with corporate confidentiality and safety policies. This ensures the integrity of the upcoming
+          field testing of experimental weaponry and the simulated capture-the-flag exercise.
+        </div>
+
+        <ul>
+          <li>All proprietary tech, weapon systems, and data encountered remain classified under VAI IP law.</li>
+          <li>No operational details, visuals, or recordings to be disclosed to unauthorized personnel.</li>
+          <li>Operatives must comply with on-site safety and directives issued by VAI staff.</li>
+          <li>Facility zones and outposts are under continuous surveillance for evaluation and security integrity.</li>
+        </ul>
+
+        <div style="height:8px"></div>
+
+        <div style="font-size:12px;color:var(--muted)">DIGITAL SIGNATURE VERIFICATION</div>
+        <div class="sig-wrap">
+          <input id="signature" type="text" placeholder="Input signature to authorize..." autocomplete="off" />
+          <div style="display:flex;gap:8px">
+            <button class="btn" id="authBtn">AUTHORIZE & ENTER</button>
+            <button class="btn" id="clearBtn" style="background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.03)">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 2 confirmation -->
+      <div id="page2" style="display:none;margin-top:8px">
+        <div class="ok-badge">[LOG] Signature Accepted</div>
+        <div class="log" style="margin-top:6px;padding:8px">
+[LOG] >>> ACCESS UNLOCKED
+// Operator Verified
+// Identity Hash Synced
+// Clearance Tier Elevated
+        </div>
+
+        <div style="height:8px"></div>
+        <div style="font-size:13px;color:#dff9ff">Signature recognized. Identity hash synced to the training database. Your clearance tier has been temporarily elevated for program use.</div>
+        <div style="height:10px"></div>
+        <div style="font-weight:700;color:var(--muted);font-size:12px">You’re cleared to proceed. Enjoy your time, Operator.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Clock ---------- */
+function updateClock(){
+  const el = document.getElementById("clock");
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  el.textContent = hh + ":" + mm;
+}
+updateClock();
+setInterval(updateClock, 30*1000);
+
+/* ---------- Boot lines to type (simulate PDA boot) ---------- */
+const bootLines = [
+  "> Initializing Secure Terminal...",
+  "> Loading VAI-OS 7.3...",
+  "> Establishing encrypted link...",
+  "> Performing integrity check...",
+  "> Running Authentication Protocol...",
+  "> Verifying operative credentials...",
+  "> Syncing training manifest...",
+  "> Launching operative briefing interface..."
+];
+
+const bootLog = document.getElementById("bootLog");
+const agreement = document.getElementById("agreement");
+let currentLine = 0;
+let charIndex = 0;
+
+function typeNextChar(){
+  if(currentLine >= bootLines.length){
+    // finished boot sequence
+    clearInterval(typingInterval);
+    setTimeout(()=>{ revealAgreement(); }, 700);
+    return;
+  }
+  const line = bootLines[currentLine];
+  // ensure an element exists for this line
+  if(!document.getElementById("line-"+currentLine)){
+    const div = document.createElement("div");
+    div.id = "line-"+currentLine;
+    div.textContent = "";
+    bootLog.appendChild(div);
+  }
+  const el = document.getElementById("line-"+currentLine);
+  if(charIndex < line.length){
+    el.textContent += line.charAt(charIndex);
+    charIndex++;
+    bootLog.scrollTop = bootLog.scrollHeight;
+  } else {
+    // full line finished -> small pause, then next line
+    charIndex = 0;
+    currentLine++;
+  }
+}
+
+/* faster typing for later lines (simulate device) */
+let typingInterval = setInterval(typeNextChar, 35);
+
+/* reveal the agreement section */
+function revealAgreement(){
+  const last = document.getElementById("line-" + (bootLines.length-1));
+  if(last){
+    const caret = document.createElement("span");
+    caret.className = "caret";
+    last.appendChild(document.createTextNode(" "));
+    last.appendChild(caret);
+    setTimeout(()=>{ caret.remove(); }, 800);
+  }
+  agreement.style.display = "block";
+  bootLog.scrollTop = bootLog.scrollHeight;
+}
+
+/* ---------- Signature behavior ---------- */
+const authBtn = document.getElementById("authBtn");
+const clearBtn = document.getElementById("clearBtn");
+const sigInput = document.getElementById("signature");
+const page2 = document.getElementById("page2");
+const page1 = document.querySelector('.terminal');
+
+clearBtn.addEventListener('click', ()=>{ sigInput.value = ""; sigInput.focus(); });
+
+function showAccessGranted(){
+  agreement.style.display = "none";
+  page2.style.display = "block";
+  const s = document.createElement("div");
+  s.textContent = "[LOG] Signature accepted • ACCESS UNLOCKED";
+  s.style.color = "#bafbe6";
+  bootLog.appendChild(s);
+  bootLog.scrollTop = bootLog.scrollHeight;
+}
+
+/* bind Enter key */
+sigInput.addEventListener("keyup", function(e){
+  if(e.key === "Enter"){ authBtn.click(); }
+});
+
+authBtn.addEventListener('click', function(){
+  const sig = sigInput.value.trim();
+  if(sig.length < 2){
+    page1.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }], { duration: 260, easing: 'ease' });
+    alert("Please enter a valid signature.");
+    return;
+  }
+  authBtn.disabled = true;
+  authBtn.textContent = "VERIFYING...";
+  setTimeout(()=> {
+    authBtn.textContent = "AUTHORIZED";
+    showAccessGranted();
+    console.log("Signed by:", sig, new Date().toISOString());
+  }, 900);
+});
+</script>
+</body>
+</html>
