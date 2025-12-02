@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Facility Access Terminal</title>
+<title>Vanthrudnir Arms Access Terminal</title>
 
 <style>
     body {
@@ -95,37 +95,49 @@
 
 <!-- PAGE 1 -->
 <div id="page1" class="terminal">
-    <h1>FACILITY ACCESS AGREEMENT</h1>
+    <h1>VANTHRUDNIR ARMS INDUSTRIES</h1>
+    <h2>EXTERNAL OPERATIVE INDUCTION FILE</h2>
     <div class="divider"></div>
 
     <p>
-        By signing this document, you acknowledge your understanding of the facility’s 
-        confidentiality protocols and agree to the following:
+        Welcome, operative. You are about to access restricted systems belonging to 
+        <strong>Vanthrudnir Arms Industries</strong>, a weapons research leader specializing in advanced prototype combat systems.
+        Before entry is authorized, you must acknowledge the following binding protocols.
+    </p>
+
+    <p>
+        Your participation in the joint training program overseen by <strong>Agent Gungnir</strong> requires strict compliance 
+        with corporate confidentiality and safety policies. This ensures the integrity of the upcoming 
+        field testing of experimental weaponry, and the simulated capture-the-flag exercise.
     </p>
 
     <ul>
-        <li>You will not disclose any technology or data found within this facility.</li>
-        <li>You will not share restricted information with unauthorized personnel.</li>
-        <li>You accept full responsibility for adherence to security protocols.</li>
-        <li>All actions within the facility are monitored and recorded.</li>
+        <li>All proprietary technology, weapon systems, and data encountered during this program remain classified under VAI intellectual property law.</li>
+        <li>No operational details, visuals, or recordings may be disclosed to outside factions or unauthorized personnel.</li>
+        <li>Operatives must comply with all on-site safety and behavioral regulations, including direct instructions issued by VAI staff.</li>
+        <li>Be advised: all facility zones—including public outposts—are under continuous surveillance for evaluation and security integrity.</li>
     </ul>
 
-    <h2>Signature Required</h2>
-    <input id="signature" type="text" placeholder="Type your signature here..." />
+    <p>
+        If you understand and accept these conditions, please provide your digital signature below. 
+        Confirmation will grant you access to your first briefing sequence.
+    </p>
 
-    <button onclick="signDocument()">SIGN & CONTINUE</button>
+    <h2>Digital Signature Verification</h2>
+    <input id="signature" type="text" placeholder="Input signature to authorize..." />
+
+    <button onclick="signDocument()">AUTHORIZE & ENTER</button>
 </div>
 
 <!-- PAGE 2 -->
 <div id="page2" class="terminal">
-    <h1>ACCESS GRANTED</h1>
+    <h1>ACCESS CONFIRMED</h1>
     <div class="divider"></div>
 
-    <p>Signature verified.</p>
-    <p>Your clearance level has been updated.</p>
-    <p>Proceed to the operational briefing.</p>
+    <p>Signature recognized. Identity hash synced to the training database.</p>
+    <p>Your clearance tier has been temporarily elevated for program use.</p>
 
-    <h2>WELCOME TO THE FACILITY</h2>
+    <h2>You’re cleared to proceed. Enjoy your time in the facility, Operator.</h2>
 </div>
 
 <script>
