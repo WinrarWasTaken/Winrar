@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>House Husband Application</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg:#0f0f10;
+    --card:#17181b;
+    --gold:#d7b97d;
+    --text:#f5f5f5;
+    --soft:#a9a9b3;
+    --line:#2b2c31;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:
+    radial-gradient(circle at top, rgba(215,185,125,0.15), transparent 35%),
+    linear-gradient(to bottom, #0b0b0c, #131417);
+    color:var(--text);
+    font-family:"Inter", sans-serif;
+    min-height:100vh;
+    padding:50px 20px;
+}
+
+.container{
+    max-width:950px;
+    margin:auto;
+}
+
+.application{
+    background:rgba(23,24,27,0.94);
+    border:1px solid rgba(215,185,125,0.25);
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:
+    0 0 40px rgba(0,0,0,0.45),
+    0 0 90px rgba(215,185,125,0.08);
+    backdrop-filter:blur(8px);
+}
+
+.hero{
+    padding:70px 60px 45px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+}
+
+.hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+    linear-gradient(120deg, transparent, rgba(255,255,255,0.03), transparent);
+    pointer-events:none;
+}
+
+.small-title{
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-size:13px;
+    margin-bottom:18px;
+}
+
+h1{
+    font-family:"Cormorant Garamond", serif;
+    font-size:68px;
+    line-height:0.95;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.hero p{
+    color:var(--soft);
+    font-size:18px;
+    line-height:1.7;
+    max-width:650px;
+}
+
+.form-area{
+    padding:55px 60px 65px;
+}
+
+.section{
+    margin-bottom:55px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:28px;
+}
+
+.section-title h2{
+    font-family:"Cormorant Garamond", serif;
+    font-size:36px;
+    font-weight:600;
+}
+
+.section-title .line{
+    flex:1;
+    height:1px;
+    background:linear-gradient(to right, var(--gold), transparent);
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:24px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+label{
+    margin-bottom:10px;
+    color:#d8d8de;
+    font-size:14px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+input,
+textarea,
+select{
+    background:#111215;
+    border:1px solid #2d3038;
+    border-radius:14px;
+    padding:16px 18px;
+    color:white;
+    font-size:15px;
+    transition:0.25s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+    outline:none;
+    border-color:var(--gold);
+    box-shadow:0 0 0 4px rgba(215,185,125,0.12);
+}
+
+textarea{
+    min-height:130px;
+    resize:vertical;
+    line-height:1.6;
+}
+
+.checks{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:18px;
+}
+
+.check{
+    background:#111215;
+    border:1px solid #292c33;
+    border-radius:16px;
+    padding:18px;
+    transition:0.25s ease;
+}
+
+.check:hover{
+    border-color:rgba(215,185,125,0.4);
+    transform:translateY(-2px);
+}
+
+.check label{
+    margin:0;
+    text-transform:none;
+    letter-spacing:0;
+    font-size:15px;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    cursor:pointer;
+}
+
+.check input{
+    margin-top:3px;
+    accent-color:var(--gold);
+}
+
+.quote{
+    border-left:3px solid var(--gold);
+    padding-left:18px;
+    color:#d0d0d7;
+    line-height:1.8;
+    font-style:italic;
+    margin-top:10px;
+}
+
+.footer-note{
+    margin-top:30px;
+    padding:24px;
+    border-radius:18px;
+    background:rgba(215,185,125,0.06);
+    border:1px solid rgba(215,185,125,0.15);
+    color:#cfcfd5;
+    line-height:1.8;
+}
+
+.submit{
+    margin-top:50px;
+    width:100%;
+    border:none;
+    border-radius:18px;
+    padding:22px;
+    font-size:16px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    background:linear-gradient(135deg, #d7b97d, #b18b4b);
+    color:#111;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s ease;
+}
+
+.submit:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 35px rgba(215,185,125,0.25);
+}
+
+.signature{
+    margin-top:18px;
+    color:var(--soft);
+    font-size:14px;
+}
+
+@media(max-width:800px){
+
+    .hero,
+    .form-area{
+        padding:40px 25px;
+    }
+
+    h1{
+        font-size:48px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="application">
+
+<div class="hero">
+
+<div class="small-title">
+Official Husband Form
+</div>
+
+<h1>
+Future House<br>Husband Application
+</h1>
+
+<p>
+This application exists to identify qualified candidates for the highly competitive role of
+being adored, mildly spoiled, and occasionally ordered to sit pretty.
+Professionalism is appreciated. Confidence is attractive. Emotional intelligence is mandatory.
+</p>
+
+</div>
+
+<div class="form-area">
+
+<form>
+
+<div class="section">
+
+<div class="section-title">
+<h2>Basic Information</h2>
+<div class="line"></div>
+</div>
+
+<div class="grid">
+
+<div class="field">
+<label>Full Name</label>
+<input type="text" placeholder="As written on official documents">
+</div>
+
+<div class="field">
+<label>Preferred Nickname</label>
+<input type="text" placeholder="What I’ll actually call you">
+</div>
+
+<div class="field">
+<label>Age</label>
+<input type="number">
+</div>
+
+<div class="field">
+<label>Current Occupation</label>
+<input type="text">
+</div>
+
+<div class="field">
+<label>Love Language</label>
+<select>
+<option>Select one</option>
+<option>Physical Touch</option>
+<option>Words of Affirmation</option>
+<option>Acts of Service</option>
+<option>Gift Giving</option>
+<option>Quality Time</option>
+</select>
+</div>
+
+<div class="field">
+<label>Cooking Ability</label>
+<select>
+<option>Select one</option>
+<option>Can survive independently</option>
+<option>Actually good at cooking</option>
+<option>Domestic masterpiece</option>
+<option>Microwave specialist</option>
+</select>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+<h2>Compatibility Check</h2>
+<div class="line"></div>
+</div>
+
+<div class="checks">
+
+<div class="check">
+<label>
+<input type="checkbox">
+<span>Comfortable receiving random affection and equally random teasing</span>
+</label>
+</div>
+
+<div class="check">
+<label>
+<input type="checkbox">
+<span>Understands that communication is attractive</span>
+</label>
+</div>
+
+<div class="check">
+<label>
+<input type="checkbox">
+<span>Capable of being adorable.</span>
+</label>
+</div>
+
+<div class="check">
+<label>
+<input type="checkbox">
+<span>Will wear my hoodies without complaint</span>
+</label>
+</div>
+
+<div class="check">
+<label>
+<input type="checkbox">
+<span>Can survive playful bullying from someone hotter than them</span>
+</label>
+</div>
+
+<div class="check">
+<label>
+<input type="checkbox">
+<span>Possesses the emotional maturity of an adult man</span>
+</label>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+<h2>Written Responses</h2>
+<div class="line"></div>
+</div>
+
+<div class="grid">
+
+<div class="field full">
+<label>Why are you applying for this position?</label>
+<textarea placeholder="Please be convincing. Pretty privilege only goes so far."></textarea>
+</div>
+
+<div class="field full">
+<label>Describe your ideal evening together</label>
+<textarea placeholder="Specific answers score higher."></textarea>
+</div>
+
+<div class="field full">
+<label>What makes you worth keeping around long term?</label>
+<textarea placeholder="Confidence encouraged. Arrogance will be evaluated carefully."></textarea>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+<h2>Final Agreement</h2>
+<div class="line"></div>
+</div>
+
+<div class="quote">
+By continuing, you acknowledge that good morning texts, physical affection,
+and being at least a little obsessed with me may become part of your daily responsibilities.
+Failure to communicate properly may result in dramatic sighing and disappointed eye contact.
+</div>
+
+<div class="footer-note">
+This form does not guarantee acceptance into the position of “house husband.”
+However, strong applications may receive:
+<br><br>
+• forehead kisses<br>
+• praise and attention<br>
+• casual possessiveness<br>
+</div>
+
+<div class="grid" style="margin-top:30px;">
+
+<div class="field">
+<label>Digital Signature</label>
+<input type="text" placeholder="Type your full name">
+</div>
+
+<div class="field">
+<label>Date</label>
+<input type="date">
+</div>
+
+</div>
+
+<div class="signature">
+Applications are reviewed with extreme bias and personal preference.
+</div>
+
+<button class="submit" type="submit">
+Submit Application
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
